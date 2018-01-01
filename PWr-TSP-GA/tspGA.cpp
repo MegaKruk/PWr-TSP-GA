@@ -1,27 +1,54 @@
 #include "Stopwatch.h"
 #include "tspGA.h"
 
-void tspGA::pathInit(std::vector<int> &calcPath, int noOfCities)
+void tspGA::popInit(std::vector<int> &popMember, int noOfCities, std::vector<std::vector<int>> &parentsPop, std::vector<std::vector<int>> &childrenPop, int popSize)
 {
-	calcPath.clear();
-	calcPath.resize(noOfCities + 1);
+	parentsPop.clear();
+	parentsPop.resize(popSize);
+	for (int i = 0; i < popSize; ++i)
+		parentsPop[i].resize(popSize);
+	
+	childrenPop.clear();
+	popMember.clear();
+	popMember.resize(noOfCities + 1);
+
 	for (int i = 0; i < noOfCities; i++)
 	{
-		calcPath[i] = i;
+		popMember[i] = i;
 		if (i == noOfCities - 1)
-			calcPath[i + 1] = calcPath[0];
+			popMember[i + 1] = popMember[0];
+	}
+
+	for (int j = 0; j < popSize; j++) 
+	{
+		parentsPop[j] = popMember;
+		for (int h = 0; h < 100 * noOfCities; h++)
+		{
+			int x = randInt(1, noOfCities - 1);
+			int y = randInt(1, noOfCities - 1);
+			std::swap(popMember[x], popMember[y]);
+		}
+	}
+
+	for (int k = 0; k < parentsPop.size(); k++)
+	{
+		for (int l = 0; l < parentsPop[k].size(); l++)
+		{
+			//std::cout << parentsPop[k][l] << "\t";
+		}
+		//std::cout << endl;
 	}
 }
 
-int tspGA::calculateCost(std::vector<std::vector<int>> &adjacancyMatrix, std::vector<int> &calcPath, int noOfCities)
+int tspGA::calculateCost(std::vector<std::vector<int>> &adjacancyMatrix, std::vector<int> &popMember, int noOfCities)
 {
 	int tmpCost = 0;
 	for (int i = 0; i < noOfCities; i++)
 	{
 		//std::cout << endl << seq[i] << endl;
-		int a = calcPath[i];
+		int a = popMember[i];
 		//std::cout << endl << "a= "<< a;
-		int b = calcPath[i + 1];
+		int b = popMember[i + 1];
 		//std::cout << endl << "b= " << b;
 		tmpCost += adjacancyMatrix[a][b % (noOfCities)];
 
@@ -40,36 +67,32 @@ double tspGA::randFraction(void)
 }
 
 // g³owna funkcja programu
-int tspGA::TSP(std::vector<std::vector<int>> &adjacancyMatrix, std::vector<int> &calcPath, int noOfCities)
+int tspGA::TSP(std::vector<std::vector<int>> &adjacancyMatrix, std::vector<int> &popMember, int noOfCities)
 {
 	srand(time(0));
 
-	// s - initial candidate
-	int currCost = calculateCost(adjacancyMatrix, calcPath, noOfCities);
-
-	// best = s
-	int bestCost = currCost;
+	// best = null
+	int bestCost = NULL;
 
 	std::vector<int> bestPath;
 	bestPath.clear();
 	bestPath.resize(noOfCities + 1);
 
-	for (int i = 0; i < noOfCities + 1; i++)
+	/*for (int i = 0; i < noOfCities + 1; i++)
 	{
-		bestPath[i] = calcPath[i];
+		bestPath[i] = popMember[i];
 	}
 
 	// glowna petla
 	for (double T = 1; T >= 1E-4; T *= 0.9)
 		for (int n = 0; n <= 100 * noOfCities; n++)
 		{
-
 			int i = randInt(1, noOfCities - 1);
 			int j = randInt(1, noOfCities - 1);
-			std::swap(calcPath[i], calcPath[j]);
+			std::swap(popMember[i], popMember[j]);
 
 			// r - tweak attempt
-			int newCost = calculateCost(adjacancyMatrix, calcPath, noOfCities);
+			int newCost = calculateCost(adjacancyMatrix, popMember, noOfCities);
 
 			if (newCost < currCost || randFraction() < exp((currCost - newCost) / T))
 			{
@@ -82,13 +105,12 @@ int tspGA::TSP(std::vector<std::vector<int>> &adjacancyMatrix, std::vector<int> 
 					bestCost = currCost;
 					for (int i = 0; i < noOfCities + 1; i++)
 					{
-						bestPath[i] = calcPath[i];
+						bestPath[i] = popMember[i];
 					}
 				}
 			}
 			else
-				std::swap(calcPath[i], calcPath[j]);
-
+				std::swap(popMember[i], popMember[j]);
 		}
 
 	std::cout << endl << endl << "Cost:\t" << bestCost << endl;
@@ -96,13 +118,13 @@ int tspGA::TSP(std::vector<std::vector<int>> &adjacancyMatrix, std::vector<int> 
 	for (int i = 0; i < noOfCities + 1; i++)
 	{
 		cout << bestPath[i] << "\t";
-	}
+	}*/
 	bestPath.clear();
 	return bestCost;
 }
 
 // wczytanie danych, przygotowanie funkcji TSP
-void tspGA::tspInit(std::vector<std::vector<int>> &adjacancyMatrix, std::vector<int> &calcPath, int noOfCities)
+void tspGA::tspInit(std::vector<std::vector<int>> &adjacancyMatrix, std::vector<int> &popMember, int noOfCities, std::vector<std::vector<int>> &parentsPop, std::vector<std::vector<int>> &childrenPop, int popSize)
 {
 	string filename, filePointer;
 	ifstream myFile;
@@ -121,7 +143,7 @@ void tspGA::tspInit(std::vector<std::vector<int>> &adjacancyMatrix, std::vector<
 		for (int i = 0; i < noOfCities; ++i)
 			adjacancyMatrix[i].resize(noOfCities);
 
-		calcPath.resize(noOfCities + 1);
+		popMember.resize(noOfCities + 1);
 
 		do myFile >> filePointer;
 		while (filePointer != "EDGE_WEIGHT_TYPE:");
@@ -165,15 +187,15 @@ void tspGA::tspInit(std::vector<std::vector<int>> &adjacancyMatrix, std::vector<
 			for (int i = 0; i < noOfCities; i++)
 			{
 				myFile >> filePointer;
+				std::cout << endl << filePointer << "\t";
 
 				myFile >> filePointer;
 				xVect.push_back(atof(filePointer.c_str()));
+				std::cout << xVect[i] << "\t";
 
 				myFile >> filePointer;
 				yVect.push_back(atof(filePointer.c_str()));
-
-				std::cout << "\n";
-				std::cout << (i + 1) << "\t" << xVect[i] << "\t" << yVect[i] << endl;
+				std::cout << yVect[i] << endl;
 			}
 			std::cout << endl;
 
@@ -187,12 +209,10 @@ void tspGA::tspInit(std::vector<std::vector<int>> &adjacancyMatrix, std::vector<
 						double yDiff = yVect.at(i) - yVect.at(j);
 						int cost = std::nearbyint(sqrt(xDiff * xDiff + yDiff * yDiff));
 						adjacancyMatrix[i][j] = cost;
-						//std::cout << adjacancyMatrix[i][j] << "\t";
 					}
 					if (i == j)
 					{
 						adjacancyMatrix[i][j] = 0;
-						//std::cout << adjacancyMatrix[i][j] << "\t";
 					}
 				}
 			}
@@ -213,10 +233,10 @@ void tspGA::tspInit(std::vector<std::vector<int>> &adjacancyMatrix, std::vector<
 		{
 			Stopwatch *timer = new Stopwatch();
 			timer->point1 = chrono::high_resolution_clock::now();
-			pathInit(calcPath, noOfCities);
-			TSP(adjacancyMatrix, calcPath, noOfCities);
+			popInit(popMember, noOfCities, parentsPop, childrenPop, popSize);
+			//TSP(adjacancyMatrix, popMember, noOfCities);
 			std::cout << endl << timer->countTimeDiff() << " nanosecs to complete this action\n";
-			calcPath.clear();
+			popMember.clear();
 			adjacancyMatrix.clear();
 			break;
 
@@ -230,10 +250,10 @@ void tspGA::tspInit(std::vector<std::vector<int>> &adjacancyMatrix, std::vector<
 			for (int i = 0; i < 51; i++)
 			{
 				timer->point1 = chrono::high_resolution_clock::now();
-				pathInit(calcPath, noOfCities);
-				result = TSP(adjacancyMatrix, calcPath, noOfCities);
+				popInit(popMember, noOfCities, parentsPop, childrenPop, popSize);
+				//result = TSP(adjacancyMatrix, popMember, noOfCities);
 				myOutput << timer->countTimeDiff() << "\t" << result << endl;
-				calcPath.clear();
+				popMember.clear();
 				std::cout << endl << (i + 1) * 100 / 51 << " % done";
 			}
 			adjacancyMatrix.clear();
@@ -256,9 +276,24 @@ std::vector<std::vector<int>> tspGA::getAdjacancyMatrix(void)
 	return std::vector<std::vector<int>>(adjacancyMatrix);
 }
 
-std::vector<int> tspGA::getCalcPath(void)
+std::vector<std::vector<int>> tspGA::getParentsPop(void)
 {
-	return std::vector<int>(calcPath);
+	return std::vector<std::vector<int>>(parentsPop);
+}
+
+std::vector<std::vector<int>> tspGA::getChildrenPop(void)
+{
+	return std::vector<std::vector<int>>(childrenPop);
+}
+
+std::vector<int> tspGA::getPopMember(void)
+{
+	return std::vector<int>(popMember);
+}
+
+int tspGA::getPopSize(void)
+{
+	return popSize;
 }
 
 int tspGA::getNoOfCities(void)
@@ -269,7 +304,7 @@ int tspGA::getNoOfCities(void)
 // funkcja inicjuj¹ca obiekt
 void tspGA::start(void)
 {
-	tspInit(getAdjacancyMatrix(), getCalcPath(), getNoOfCities());
+	tspInit(getAdjacancyMatrix(), getPopMember(), getNoOfCities(), getParentsPop(), getChildrenPop(), getPopSize());
 }
 
 tspGA::tspGA()
