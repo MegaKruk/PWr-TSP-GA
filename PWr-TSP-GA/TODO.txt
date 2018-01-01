@@ -2,4 +2,4 @@ wykresy w skali logarytmicznej - done
 parser - done
 u¿yæ vectora - done
 hermetyzacja - done
-
+http://www.obitko.com/tutorials/genetic-algorithms/recommendations.php

@@ -1,14 +1,13 @@
 #include "Stopwatch.h"
 #include "tspGA.h"
 
-void tspGA::popInit(std::vector<int> &popMember, int noOfCities, std::vector<std::vector<int>> &parentsPop, std::vector<std::vector<int>> &childrenPop, int popSize)
+void tspGA::popInit(std::vector<int> &popMember, int noOfCities, std::vector<std::vector<int>> &parentsPop, int popSize)
 {
 	parentsPop.clear();
 	parentsPop.resize(popSize);
 	for (int i = 0; i < popSize; ++i)
 		parentsPop[i].resize(popSize);
 	
-	childrenPop.clear();
 	popMember.clear();
 	popMember.resize(noOfCities + 1);
 
@@ -30,25 +29,25 @@ void tspGA::popInit(std::vector<int> &popMember, int noOfCities, std::vector<std
 		}
 	}
 
-	for (int k = 0; k < parentsPop.size(); k++)
+	/*for (int k = 0; k < parentsPop.size(); k++)
 	{
 		for (int l = 0; l < parentsPop[k].size(); l++)
 		{
-			//std::cout << parentsPop[k][l] << "\t";
+			std::cout << parentsPop[k][l] << "\t";
 		}
-		//std::cout << endl;
-	}
+		std::cout << endl;
+	}*/
 }
 
-int tspGA::calculateCost(std::vector<std::vector<int>> &adjacancyMatrix, std::vector<int> &popMember, int noOfCities)
+int tspGA::calculateCost(std::vector<std::vector<int>> &adjacancyMatrix, int noOfCities, std::vector<std::vector<int>> &parentsPop, int memberPtr)
 {
 	int tmpCost = 0;
 	for (int i = 0; i < noOfCities; i++)
 	{
 		//std::cout << endl << seq[i] << endl;
-		int a = popMember[i];
+		int a = parentsPop[memberPtr][i];
 		//std::cout << endl << "a= "<< a;
-		int b = popMember[i + 1];
+		int b = parentsPop[memberPtr][i + 1];
 		//std::cout << endl << "b= " << b;
 		tmpCost += adjacancyMatrix[a][b % (noOfCities)];
 
@@ -67,59 +66,156 @@ double tspGA::randFraction(void)
 }
 
 // g³owna funkcja programu
-int tspGA::TSP(std::vector<std::vector<int>> &adjacancyMatrix, std::vector<int> &popMember, int noOfCities)
+int tspGA::TSP(std::vector<std::vector<int>> &adjacancyMatrix, std::vector<int> &popMember, int noOfCities, std::vector<std::vector<int>> &parentsPop, std::vector<std::vector<int>> &childrenPop, 
+	int popSize, double crossoverRatio, double mutationRatio)
 {
 	srand(time(0));
 
 	// best = null
 	int bestCost = NULL;
-
 	std::vector<int> bestPath;
-	bestPath.clear();
 	bestPath.resize(noOfCities + 1);
-
-	/*for (int i = 0; i < noOfCities + 1; i++)
+	//int c = 0;
+	do
 	{
-		bestPath[i] = popMember[i];
-	}
-
-	// glowna petla
-	for (double T = 1; T >= 1E-4; T *= 0.9)
-		for (int n = 0; n <= 100 * noOfCities; n++)
+		// Assess fitness of every P(i)
+		for (int i = 0; i < parentsPop.size(); i++)
 		{
-			int i = randInt(1, noOfCities - 1);
-			int j = randInt(1, noOfCities - 1);
-			std::swap(popMember[i], popMember[j]);
-
-			// r - tweak attempt
-			int newCost = calculateCost(adjacancyMatrix, popMember, noOfCities);
-
-			if (newCost < currCost || randFraction() < exp((currCost - newCost) / T))
+			int currCost = calculateCost(adjacancyMatrix, noOfCities, parentsPop, i);
+			//std::cout << currCost << "\t";
+			if (bestCost == NULL || currCost < bestCost)
 			{
-				// s = r
-				currCost = newCost;
+				bestCost = currCost;
+				for (int j = 0; j < noOfCities + 1; j++)
+					bestPath[j] = parentsPop[i][j];
+			}
+		}
 
-				// best = s
-				if (currCost < bestCost)
-				{
-					bestCost = currCost;
-					for (int i = 0; i < noOfCities + 1; i++)
-					{
-						bestPath[i] = popMember[i];
-					}
-				}
+		childrenPop.clear();
+		childrenPop.resize(0);
+		
+		for (int k = 0; k < parentsPop.size() / 4; k++)
+		{
+			// select 2 random parents
+			std::vector<int> parentA;
+			parentA.resize(noOfCities + 1);
+			int randA = randInt(0, parentsPop.size() - 1);
+			for (int i = 0; i < noOfCities + 1; i++)
+				parentA[i] = parentsPop[randA][i];
+
+			std::vector<int> parentB;
+			parentB.resize(noOfCities + 1);
+			int randB = randInt(0, parentsPop.size() - 1);
+			while (randA == randB)
+				randB = randInt(0, parentsPop.size() - 1);
+			for (int i = 0; i < noOfCities + 1; i++)
+				parentB[i] = parentsPop[randB][i];
+			
+			// choose 2 random places to cut parent
+			int randCutA = randInt(2, noOfCities - 2);
+			std::vector<int> firstHalfA;
+			firstHalfA.resize(noOfCities + 1);
+			std::vector<int> secondHalfA;
+			secondHalfA.resize(noOfCities + 1);
+			for (int i = 0; i < randCutA; i++)
+				firstHalfA[i] = parentA[i];
+			for (int i = randCutA; i < noOfCities + 1; i++)
+				secondHalfA[i] = parentA[i];
+
+			int randCutB = randInt(2, noOfCities - 2);
+			std::vector<int> firstHalfB;
+			firstHalfB.resize(noOfCities + 1);
+			std::vector<int> secondHalfB;
+			secondHalfB.resize(noOfCities + 1);
+			for (int i = 0; i < randCutB; i++)
+				firstHalfB[i] = parentB[i];
+			for (int i = randCutB; i < noOfCities + 1; i++)
+				secondHalfB[i] = parentB[i];
+			
+			// breed with chance to cross and to mutate
+			std::vector<int> childA;
+			childA.resize(noOfCities + 1);
+
+			std::vector<int> childB;
+			childB.resize(noOfCities + 1);
+
+			// crossover
+			if (int diceroll = randFraction() < crossoverRatio / 100)
+			{
+				for (int i = 0; i < randCutA; i++)
+					childA[i] = firstHalfA[i];
+				for (int i = randCutA; i < noOfCities + 1; i++)
+					childA[i] = secondHalfA[i];
+				for (int i = 0; i < randCutB; i++)
+					childB[i] = firstHalfB[i];
+				for (int i = randCutB; i < noOfCities + 1; i++)
+					childB[i] = secondHalfB[i];
 			}
 			else
-				std::swap(popMember[i], popMember[j]);
+			{
+				for (int i = 0; i < noOfCities + 1; i++)
+					childA[i] = parentA[i];
+				for (int i = 0; i < noOfCities + 1; i++)
+					childB[i] = parentB[i];
+			}
+			
+			// mutation
+			if (int diceroll = randFraction() < mutationRatio / 1000)
+			{
+				for (int h = 0; h < noOfCities; h++)
+				{
+					int x = randInt(1, noOfCities - 1);
+					int y = randInt(1, noOfCities - 1);
+					std::swap(childA[x], childA[y]);
+				}
+				for (int h = 0; h < noOfCities; h++)
+				{
+					int x = randInt(1, noOfCities - 1);
+					int y = randInt(1, noOfCities - 1);
+					std::swap(childB[x], childB[y]);
+				}
+			}
+			
+			// Q <- Qa, Qb
+			childrenPop.push_back(childA);
+			childrenPop.push_back(childB);
+
+			// P <- Q
+			parentsPop.push_back(childA);
+			parentsPop.push_back(childB);
+
+			parentA.clear();
+			parentA.resize(0);
+			parentB.clear();
+			parentB.resize(0);
+			firstHalfA.clear();
+			firstHalfA.resize(0);
+			secondHalfA.clear();
+			secondHalfA.resize(0);
+			firstHalfB.clear();
+			firstHalfB.resize(0);
+			secondHalfB.clear();
+			secondHalfB.resize(0);
+			childA.clear();
+			childA.resize(0);
+			childB.clear();
+			childB.resize(0);
 		}
+	}
+	while (childrenPop.size() < popSize);
 
 	std::cout << endl << endl << "Cost:\t" << bestCost << endl;
 	std::cout << "Path:\t";
 	for (int i = 0; i < noOfCities + 1; i++)
 	{
 		cout << bestPath[i] << "\t";
-	}*/
+	}
 	bestPath.clear();
+	bestPath.resize(0);
+	childrenPop.clear();
+	childrenPop.resize(0);
+	parentsPop.clear();
+	parentsPop.resize(0);
 	return bestCost;
 }
 
@@ -233,8 +329,8 @@ void tspGA::tspInit(std::vector<std::vector<int>> &adjacancyMatrix, std::vector<
 		{
 			Stopwatch *timer = new Stopwatch();
 			timer->point1 = chrono::high_resolution_clock::now();
-			popInit(popMember, noOfCities, parentsPop, childrenPop, popSize);
-			//TSP(adjacancyMatrix, popMember, noOfCities);
+			popInit(popMember, noOfCities, parentsPop, popSize);
+			TSP(adjacancyMatrix, popMember, noOfCities, parentsPop, childrenPop, popSize, crossoverRatio, mutationRatio);
 			std::cout << endl << timer->countTimeDiff() << " nanosecs to complete this action\n";
 			popMember.clear();
 			adjacancyMatrix.clear();
@@ -250,8 +346,8 @@ void tspGA::tspInit(std::vector<std::vector<int>> &adjacancyMatrix, std::vector<
 			for (int i = 0; i < 51; i++)
 			{
 				timer->point1 = chrono::high_resolution_clock::now();
-				popInit(popMember, noOfCities, parentsPop, childrenPop, popSize);
-				//result = TSP(adjacancyMatrix, popMember, noOfCities);
+				popInit(popMember, noOfCities, parentsPop, popSize);
+				result = TSP(adjacancyMatrix, popMember, noOfCities, parentsPop, childrenPop, popSize, crossoverRatio, mutationRatio);
 				myOutput << timer->countTimeDiff() << "\t" << result << endl;
 				popMember.clear();
 				std::cout << endl << (i + 1) * 100 / 51 << " % done";
