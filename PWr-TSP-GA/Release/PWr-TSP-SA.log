@@ -1,25 +1,23 @@
-﻿Build started 02.01.2018 01:33:39.
+﻿Build started 02.01.2018 15:44:22.
      1>Project "C:\Users\Filicz\Documents\workspace\VSProjects\PWr-TSP-GA\PWr-TSP-GA\PWr-TSP-SA.vcxproj" on node 2 (Build target(s)).
      1>C:\Program Files (x86)\MSBuild\Microsoft.Cpp\v4.0\V140\Microsoft.CppBuild.targets(392,5): warning MSB8028: The intermediate directory (Release\) contains files shared from another project (PWr-TSP-SA.vcxproj).  This can lead to incorrect clean and rebuild behavior.
      1>ClCompile:
          C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin\CL.exe /c /Zi /nologo /W3 /WX- /sdl /O2 /Oi /Oy- /GL /D _MBCS /Gm- /EHsc /MD /GS /Gy /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /Fo"Release\\" /Fd"Release\vc140.pdb" /Gd /TP /analyze- /errorReport:prompt tspGA.cpp
          tspGA.cpp
-     1>tspGA.cpp(77): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
-     1>tspGA.cpp(86): warning C4018: '<': signed/unsigned mismatch
-     1>tspGA.cpp(88): warning C4018: '<': signed/unsigned mismatch
-     1>tspGA.cpp(362): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
+     1>tspGA.cpp(61): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
+     1>tspGA.cpp(366): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
        Link:
          C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"C:\Users\Filicz\Documents\workspace\VSProjects\PWr-TSP-GA\Release\PWr-TSP-GA.exe" /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"C:\Users\Filicz\Documents\workspace\VSProjects\PWr-TSP-GA\Release\PWr-TSP-GA.pdb" /OPT:REF /OPT:ICF /LTCG:incremental /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:\Users\Filicz\Documents\workspace\VSProjects\PWr-TSP-GA\Release\PWr-TSP-GA.lib" /MACHINE:X86 /SAFESEH Release\main.obj
          Release\Stopwatch.obj
          Release\tspGA.obj
          Generating code
-         2 of 477 functions ( 0.4%) were compiled, the rest were copied from previous compilation.
+         1 of 504 functions ( 0.2%) were compiled, the rest were copied from previous compilation.
            0 functions were new in current compilation
-           12 functions had inline decision re-evaluated but remain unchanged
+           1 functions had inline decision re-evaluated but remain unchanged
          Finished generating code
          PWr-TSP-SA.vcxproj -> C:\Users\Filicz\Documents\workspace\VSProjects\PWr-TSP-GA\Release\PWr-TSP-GA.exe
      1>Done Building Project "C:\Users\Filicz\Documents\workspace\VSProjects\PWr-TSP-GA\PWr-TSP-GA\PWr-TSP-SA.vcxproj" (Build target(s)).
 
 Build succeeded.
 
-Time Elapsed 00:00:01.08
+Time Elapsed 00:00:01.05
