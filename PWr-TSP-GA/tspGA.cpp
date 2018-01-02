@@ -4,11 +4,13 @@
 void tspGA::popInit(std::vector<int> &popMember, int noOfCities, std::vector<std::vector<int>> &parentsPop, int popSize)
 {
 	parentsPop.clear();
+	parentsPop.resize(0);
 	parentsPop.resize(popSize);
 	for (int i = 0; i < popSize; ++i)
-		parentsPop[i].resize(popSize);
+		parentsPop[i].resize(noOfCities + 1);
 	
 	popMember.clear();
+	popMember.resize(0);
 	popMember.resize(noOfCities + 1);
 
 	for (int i = 0; i < noOfCities; i++)
@@ -20,16 +22,19 @@ void tspGA::popInit(std::vector<int> &popMember, int noOfCities, std::vector<std
 
 	for (int j = 0; j < popSize; j++) 
 	{
+		
+
 		parentsPop[j] = popMember;
-		for (int h = 0; h < 100 * noOfCities; h++)
+		for (int h = 0; h < 1024 * noOfCities; h++)
 		{
 			int x = randInt(1, noOfCities - 1);
 			int y = randInt(1, noOfCities - 1);
 			std::swap(popMember[x], popMember[y]);
+			
 		}
 	}
-
-	/*for (int k = 0; k < parentsPop.size(); k++)
+	/*
+	for (int k = 0; k < parentsPop.size(); k++)
 	{
 		for (int l = 0; l < parentsPop[k].size(); l++)
 		{
@@ -59,11 +64,11 @@ int tspGA::randInt(int l, int r)
 {
 	return rand() % (r - l + 1) + l;
 }
-
+/*
 double tspGA::randFraction(void)
 {
 	return randInt(1, 10000) / 10000;
-}
+}*/
 
 // g³owna funkcja programu
 int tspGA::TSP(std::vector<std::vector<int>> &adjacancyMatrix, std::vector<int> &popMember, int noOfCities, std::vector<std::vector<int>> &parentsPop, std::vector<std::vector<int>> &childrenPop, 
@@ -74,45 +79,65 @@ int tspGA::TSP(std::vector<std::vector<int>> &adjacancyMatrix, std::vector<int> 
 	// best = null
 	int bestCost = NULL;
 	std::vector<int> bestPath;
+	bestPath.clear();
 	bestPath.resize(noOfCities + 1);
-	//int c = 0;
+	int iterations = noOfCities * 4;
+
+	for (int k = 0; k < parentsPop.size(); k++)
+	{
+		for (int l = 0; l < parentsPop[k].size(); l++)
+		{
+			std::cout << parentsPop[k][l] << "\t";
+		}
+		std::cout << endl;
+	}
+
 	do
 	{
 		// Assess fitness of every P(i)
-		for (int i = 0; i < parentsPop.size(); i++)
+		for (int i = 0; i < popSize; i++)
 		{
 			int currCost = calculateCost(adjacancyMatrix, noOfCities, parentsPop, i);
 			//std::cout << currCost << "\t";
 			if (bestCost == NULL || currCost < bestCost)
 			{
 				bestCost = currCost;
+				cout << endl << bestCost << endl;
 				for (int j = 0; j < noOfCities + 1; j++)
 					bestPath[j] = parentsPop[i][j];
 			}
 		}
-
 		childrenPop.clear();
 		childrenPop.resize(0);
 		
-		for (int k = 0; k < parentsPop.size() / 4; k++)
+		for (int k = 0; k < popSize / 2; k++)
 		{
 			// select 2 random parents
 			std::vector<int> parentA;
 			parentA.resize(noOfCities + 1);
-			int randA = randInt(0, parentsPop.size() - 1);
+			int randA = randInt(0, popSize - 1);
+			//cout << " A" << randA;
 			for (int i = 0; i < noOfCities + 1; i++)
 				parentA[i] = parentsPop[randA][i];
+			//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+			/*cout << endl << "a ";
+			for (int i = 0; i < noOfCities + 1; i++)
+			{
+				cout << parentA[i] << " ";
+			}*/
+
+			
 
 			std::vector<int> parentB;
 			parentB.resize(noOfCities + 1);
-			int randB = randInt(0, parentsPop.size() - 1);
+			int randB = randInt(0, popSize - 1);
 			while (randA == randB)
-				randB = randInt(0, parentsPop.size() - 1);
+				randB = randInt(0, popSize - 1);
 			for (int i = 0; i < noOfCities + 1; i++)
 				parentB[i] = parentsPop[randB][i];
 			
 			// choose 2 random places to cut parent
-			int randCutA = randInt(2, noOfCities - 2);
+			int randCutA = noOfCities / 2;
 			std::vector<int> firstHalfA;
 			firstHalfA.resize(noOfCities + 1);
 			std::vector<int> secondHalfA;
@@ -122,7 +147,7 @@ int tspGA::TSP(std::vector<std::vector<int>> &adjacancyMatrix, std::vector<int> 
 			for (int i = randCutA; i < noOfCities + 1; i++)
 				secondHalfA[i] = parentA[i];
 
-			int randCutB = randInt(2, noOfCities - 2);
+			int randCutB = noOfCities/2;
 			std::vector<int> firstHalfB;
 			firstHalfB.resize(noOfCities + 1);
 			std::vector<int> secondHalfB;
@@ -138,9 +163,10 @@ int tspGA::TSP(std::vector<std::vector<int>> &adjacancyMatrix, std::vector<int> 
 
 			std::vector<int> childB;
 			childB.resize(noOfCities + 1);
-
+			double diceroll = randInt(1, 10000);
+			diceroll = diceroll / 10000;
 			// crossover
-			if (int diceroll = randFraction() < crossoverRatio / 100)
+			if (diceroll < crossoverRatio / 100)
 			{
 				for (int i = 0; i < randCutA; i++)
 					childA[i] = firstHalfA[i];
@@ -160,7 +186,7 @@ int tspGA::TSP(std::vector<std::vector<int>> &adjacancyMatrix, std::vector<int> 
 			}
 			
 			// mutation
-			if (int diceroll = randFraction() < mutationRatio / 1000)
+			if (diceroll < (mutationRatio / 1000.0))
 			{
 				for (int h = 0; h < noOfCities; h++)
 				{
@@ -175,14 +201,43 @@ int tspGA::TSP(std::vector<std::vector<int>> &adjacancyMatrix, std::vector<int> 
 					std::swap(childB[x], childB[y]);
 				}
 			}
+
+			/*cout << endl << "a ";
+			for (int i = 0; i < noOfCities + 1; i++)
+			{
+				cout << childA[i] << " ";
+			}
+
+			cout << endl << "b ";
+			for (int i = 0; i < noOfCities + 1; i++)
+			{
+				cout << childB[i] << " ";
+			}*/
 			
 			// Q <- Qa, Qb
 			childrenPop.push_back(childA);
 			childrenPop.push_back(childB);
+			
+			if (childrenPop.size() == popSize)
+			{
+				parentsPop.clear();
+				parentsPop.resize(0);
+				parentsPop.resize(popSize);
+				for (int v = 0; v < popSize; ++v)
+					parentsPop[v].resize(noOfCities + 1);
+
+				for (int i = 0; i < popSize; i++)
+				{
+					for (int j = 0; j < noOfCities + 1; j++)
+					{
+						parentsPop[i][j] = childrenPop[i][j];
+					}
+				}
+				//childrenPop.clear();
+				//childrenPop.resize(0);
+			}
 
 			// P <- Q
-			parentsPop.push_back(childA);
-			parentsPop.push_back(childB);
 
 			parentA.clear();
 			parentA.resize(0);
@@ -201,8 +256,9 @@ int tspGA::TSP(std::vector<std::vector<int>> &adjacancyMatrix, std::vector<int> 
 			childB.clear();
 			childB.resize(0);
 		}
+		iterations--;
 	}
-	while (childrenPop.size() < popSize);
+	while (iterations > 0);
 
 	std::cout << endl << endl << "Cost:\t" << bestCost << endl;
 	std::cout << "Path:\t";
