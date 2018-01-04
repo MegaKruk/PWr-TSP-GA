@@ -8,7 +8,6 @@
 #include <cstdlib>
 #include <cmath>
 #include <vector>
-#include <map>
 
 class tspGA
 {
@@ -26,8 +25,7 @@ private:
 public:
 	tspGA();
 	~tspGA();
-	int TSP(std::vector<std::vector<int>> &adjacancyMatrix, std::vector<int> &popMember, int noOfCities, std::vector<std::vector<int>> &parentsPop, std::vector<std::vector<int>> &childrenPop, int popSize,
-		double crossoverRatio, double mutationRatio);
+	int TSP(std::vector<std::vector<int>> &adjacancyMatrix, std::vector<int> &popMember, int noOfCities, std::vector<std::vector<int>> &parentsPop, std::vector<std::vector<int>> &childrenPop, int popSize, double crossoverRatio, double mutationRatio);
 	void popInit(std::vector<int> &popMember, int noOfCities, std::vector<std::vector<int>> &parentsPop, int popSize);
 	int calculateCost(std::vector<std::vector<int>> &adjacancyMatrix, int noOfCities, std::vector<std::vector<int>> &parentsPop, int memberPtr);
 	int randInt(int l, int r);

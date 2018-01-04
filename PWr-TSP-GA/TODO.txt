@@ -3,3 +3,8 @@ parser - done
 u¿yæ vectora - done
 hermetyzacja - done
 http://www.obitko.com/tutorials/genetic-algorithms/recommendations.php
+próbowaæ wybieraæ rodziców greedy
+Cormen 
+selekcja, metoda rankingowa albo turniej dla 4-5
+parametrem liczba iteracji
+dla 3 problemów ma³o œrenio du¿o pokazaæ jak siê zmienia wynik w zale¿noœci od iloœci iteracji (3)
