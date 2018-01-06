@@ -1,9 +1,8 @@
 #include "Stopwatch.h"
 #include "tspGA.h"
 
-void tspGA::popInit(std::vector<int> &popMember, int noOfCities, std::vector<std::vector<int>> &parentsPop, int popSize)
+void tspGA::popInit(std::vector<int> &popMember, int noOfCities, std::vector<std::vector<int>> &parentsPop, int popSize, std::vector<std::vector<int>> &adjacancyMatrix)
 {
-	/*****use hash table to check for duplicates******/
 	parentsPop.clear();
 	parentsPop.resize(0);
 	parentsPop.resize(popSize);
@@ -21,6 +20,49 @@ void tspGA::popInit(std::vector<int> &popMember, int noOfCities, std::vector<std
 			popMember[i + 1] = popMember[0];
 	}
 
+	// choose first parent with greedy
+	/*int bestGreedy;
+	int currGreedy;
+	std::vector <int> visited;
+	bool isVisited;
+	visited.push_back(0);
+	popMember[0] = 0;
+	popMember[noOfCities] = 0;
+	for (int i = 1; i < noOfCities; i++)
+	{
+		bestGreedy = INT_MAX;
+		isVisited = false;
+		for (int j = 0; j < noOfCities; j++)
+		{
+			if (adjacancyMatrix[popMember[i - 1]][j] != 0)
+			{
+				for (int k = 0; k < visited.size(); k++)
+				{
+					if (j == visited[k])
+						isVisited = true;
+				}
+				if (isVisited == false) 
+				{
+					currGreedy = adjacancyMatrix[popMember[i - 1]][j];
+					if (currGreedy < bestGreedy)
+					{
+						popMember[i] = j;
+						visited.push_back(j);
+						bestGreedy = currGreedy;
+					}
+				}
+			}
+		}
+	}
+	visited.clear();
+	visited.resize(0);
+	cout << endl << "popM ";
+	for (int i = 0; i < noOfCities + 1; i++)
+	{
+		cout << popMember[i] << " ";
+	}
+	cout << endl;
+	*/
 	for (int j = 0; j < popSize; j++)
 	{
 		for (int h = 0; h < 1024 * noOfCities; h++)
@@ -38,11 +80,8 @@ int tspGA::calculateCost(std::vector<std::vector<int>> &adjacancyMatrix, int noO
 	int tmpCost = 0;
 	for (int i = 0; i < noOfCities; i++)
 	{
-		//std::cout << endl << seq[i] << endl;
 		int a = parentsPop[memberPtr][i];
-		//std::cout << endl << "a= "<< a;
 		int b = parentsPop[memberPtr][i + 1];
-		//std::cout << endl << "b= " << b;
 		tmpCost += adjacancyMatrix[a][b % (noOfCities)];
 
 	}
@@ -59,7 +98,8 @@ int tspGA::TSP(std::vector<std::vector<int>> &adjacancyMatrix, std::vector<int> 
 	int popSize, double crossoverRatio, double mutationRatio)
 {
 	srand(time(0));
-	// best = null
+
+	// best <- null
 	int bestCost = NULL;
 	std::vector<int> bestPath;
 	bestPath.clear();
@@ -67,7 +107,7 @@ int tspGA::TSP(std::vector<std::vector<int>> &adjacancyMatrix, std::vector<int> 
 	int iterations = 0;
 	do
 	{
-		//for observing populacy
+		//for observing population
 		/*for (int k = 0; k < parentsPop.size(); k++)
 		{
 			for (int l = 0; l < parentsPop[k].size(); l++)
@@ -81,11 +121,9 @@ int tspGA::TSP(std::vector<std::vector<int>> &adjacancyMatrix, std::vector<int> 
 		for (int i = 0; i < popSize; i++)
 		{
 			int currCost = calculateCost(adjacancyMatrix, noOfCities, parentsPop, i);
-			//std::cout << currCost << "\t";
 			if (bestCost == NULL || currCost < bestCost)
 			{
 				bestCost = currCost;
-				cout << endl << bestCost << endl;
 				for (int j = 0; j < noOfCities + 1; j++)
 					bestPath[j] = parentsPop[i][j];
 			}
@@ -95,9 +133,6 @@ int tspGA::TSP(std::vector<std::vector<int>> &adjacancyMatrix, std::vector<int> 
 
 		for (int k = 0; k < popSize / 2; k++)
 		{
-			/*********Alternatively select by tournament***************************************/
-			/*********Or use tournament as a mean to allow 1 fittest parent to survive*********/
-
 			// tournament
 			int bestParent = NULL;
 			int currParent;
@@ -110,17 +145,6 @@ int tspGA::TSP(std::vector<std::vector<int>> &adjacancyMatrix, std::vector<int> 
 			contestantA.resize(noOfCities + 1);
 			std::vector<int> contestantB;
 			contestantB.resize(noOfCities + 1);
-			//std::vector<int> tournDraft;
-			//tournDraft.resize(tournSize);
-			//std::vector<std::vector<int>> tournResults;
-			//tournResults.resize(tournSize);
-			//for (int i = 0; i < tournSize; i++)
-				//tournResults[i].resize(1);
-			//tournResults.resize(2);
-			//std::vector<std::vector<int>> tournament;
-			//tournament.resize(tournSize);
-			//for (int i = 0; i < tournSize; i++)
-				//tournament[i].resize(noOfCities + 1);
 
 			int randA = randInt(0, popSize - 1);
 			for (int i = 0; i < noOfCities + 1; i++)
@@ -136,20 +160,14 @@ int tspGA::TSP(std::vector<std::vector<int>> &adjacancyMatrix, std::vector<int> 
 			int costB = 0;
 			for (int i = 0; i < noOfCities; i++)
 			{
-				//std::cout << endl << seq[i] << endl;
 				int a = contestantA[i];
-				//std::cout << endl << "a= "<< a;
 				int b = contestantA[i + 1];
-				//std::cout << endl << "b= " << b;
 				costA += adjacancyMatrix[a][b % (noOfCities)];
 			}
 			for (int i = 0; i < noOfCities; i++)
 			{
-				//std::cout << endl << seq[i] << endl;
 				int a = contestantB[i];
-				//std::cout << endl << "a= "<< a;
 				int b = contestantB[i + 1];
-				//std::cout << endl << "b= " << b;
 				costB += adjacancyMatrix[a][b % (noOfCities)];
 			}
 			if (costA < costB)
@@ -177,20 +195,14 @@ int tspGA::TSP(std::vector<std::vector<int>> &adjacancyMatrix, std::vector<int> 
 			costB = 0;
 			for (int i = 0; i < noOfCities; i++)
 			{
-				//std::cout << endl << seq[i] << endl;
 				int a = contestantA[i];
-				//std::cout << endl << "a= "<< a;
 				int b = contestantA[i + 1];
-				//std::cout << endl << "b= " << b;
 				costA += adjacancyMatrix[a][b % (noOfCities)];
 			}
 			for (int i = 0; i < noOfCities; i++)
 			{
-				//std::cout << endl << seq[i] << endl;
 				int a = contestantB[i];
-				//std::cout << endl << "a= "<< a;
 				int b = contestantB[i + 1];
-				//std::cout << endl << "b= " << b;
 				costB += adjacancyMatrix[a][b % (noOfCities)];
 			}
 			if (costA < costB)
@@ -204,75 +216,18 @@ int tspGA::TSP(std::vector<std::vector<int>> &adjacancyMatrix, std::vector<int> 
 					parentB[j] = contestantB[j];
 			}
 
-
-
-
-			/*for (int i = 0; i < tournSize; i++)
-			{
-				
-				//cout << tournDraft << " ";
-				currParent = calculateCost(adjacancyMatrix, noOfCities, parentsPop, tournDraft[i]);
-				if (currParent < bestParent || bestParent == NULL)
-				{
-					//cout << tournDraft << " ";
-					bestParent = currParent;
-					for (int j = 0; j < noOfCities + 1; j++)
-						parentA[j] = parentsPop[tournDraft[i]][j];
-					for (int j = 0; j < noOfCities + 1; j++)
-						cout << parentA[j] << " ";
-					cout << endl;
-
-				}
-				else if (currParent < secondParent || secondParent == NULL)
-				{
-					//cout << tournDraft << " ";
-					secondParent = currParent;
-					for (int j = 0; j < noOfCities + 1; j++)
-						parentB[j] = parentsPop[tournDraft[i]][j];
-				}
-				//cout << endl;
-			}*/
-			/*cout << endl << endl;
-			for (int j = 0; j < noOfCities + 1; j++)
-				cout << parentA[j] << " ";
-			cout << endl;
-			for (int j = 0; j < noOfCities + 1; j++)
-				cout << parentB[j] << " ";
-			cout << endl;*/
-
-			// select 2 random parents
-			/*int randA = randInt(0, popSize - 1);
-			for (int i = 0; i < noOfCities + 1; i++)
-				parentA[i] = parentsPop[randA][i];
-
-			int randB = randInt(0, popSize - 1);
-			while (randA == randB)
-				randB = randInt(0, popSize - 1);
-			for (int i = 0; i < noOfCities + 1; i++)
-				parentB[i] = parentsPop[randB][i];*/
-
-			
-
 			// choose random place to cut parent
 			int randCut = randInt(3, noOfCities - 2);
 
 			std::vector<int> firstHalfA;
 			firstHalfA.resize(randCut);
-			//std::vector<int> secondHalfA;
-			//secondHalfA.resize(noOfCities + 1);
 			for (int i = 0; i < randCut; i++)
 				firstHalfA[i] = parentA[i];
-			//for (int i = randCut; i < noOfCities + 1; i++)
-			//	secondHalfA[i] = parentA[i];
 
 			std::vector<int> firstHalfB;
 			firstHalfB.resize(randCut);
-			//std::vector<int> secondHalfB;
-			//secondHalfB.resize(noOfCities + 1);
 			for (int i = 0; i < randCut; i++)
 				firstHalfB[i] = parentB[i];
-			//for (int i = randCut; i < noOfCities + 1; i++)
-			//	secondHalfB[i] = parentB[i];
 
 			// breed with chance to cross and to mutate
 			std::vector<int> childA;
@@ -282,7 +237,6 @@ int tspGA::TSP(std::vector<std::vector<int>> &adjacancyMatrix, std::vector<int> 
 
 			double diceroll = randInt(1, 10000);
 			diceroll = diceroll / 10000;
-			/**************Alternatively allow crossover and mutation only when result child is fitter than parent***********/
 			// crossover
 			if (diceroll < crossoverRatio / 100)
 			{
@@ -317,7 +271,6 @@ int tspGA::TSP(std::vector<std::vector<int>> &adjacancyMatrix, std::vector<int> 
 					if (count == remaining)
 						break;
 				}
-				/******************************************************************************************/
 
 				// Copy elements from second parent up to cut point
 				for (int i = 0; i < randCut; i++)
@@ -374,17 +327,6 @@ int tspGA::TSP(std::vector<std::vector<int>> &adjacancyMatrix, std::vector<int> 
 					std::swap(childB[z], childB[t]);
 			}
 
-			/*cout << endl << "a ";
-			for (int i = 0; i < noOfCities + 1; i++)
-			{
-			cout << childA[i] << " ";
-			}
-			cout << endl << "b ";
-			for (int i = 0; i < noOfCities + 1; i++)
-			{
-			cout << childB[i] << " ";
-			}*/
-
 			// Q <- Qa, Qb
 			childrenPop.push_back(childA);
 			childrenPop.push_back(childB);
@@ -395,17 +337,12 @@ int tspGA::TSP(std::vector<std::vector<int>> &adjacancyMatrix, std::vector<int> 
 			parentB.resize(0);
 			firstHalfA.clear();
 			firstHalfA.resize(0);
-			//secondHalfA.clear();
-			//secondHalfA.resize(0);
 			firstHalfB.clear();
 			firstHalfB.resize(0);
-			//secondHalfB.clear();
-			//secondHalfB.resize(0);
 			childA.clear();
 			childA.resize(0);
 			childB.clear();
 			childB.resize(0);
-
 		}
 
 		// P <- Q
@@ -423,9 +360,8 @@ int tspGA::TSP(std::vector<std::vector<int>> &adjacancyMatrix, std::vector<int> 
 			}
 		}
 		iterations++;
-	} while (iterations < cbrt(noOfCities) * 10000 /*iterations < 4*/);
+	} while (iterations < sqrt(noOfCities) * 10000);
 
-	//std::cout << endl << endl << "Iterations:\t" << iterations << endl;
 	std::cout << endl << endl << "Cost:\t" << bestCost << endl;
 	std::cout << "Path:\t";
 	for (int i = 0; i < noOfCities + 1; i++)
@@ -448,7 +384,7 @@ int tspGA::tspInit(std::vector<std::vector<int>> &adjacancyMatrix, std::vector<i
 	crossoverRatio = 90;		// w procentach (najlepsze 60%, 80-95%)
 	popSize = 30;				// musi byæ parzysta (najlepsze 20-30, 50-100)
 
-		// main menu
+	// main menu
 	while (1)
 	{
 		int option;
@@ -462,7 +398,7 @@ int tspGA::tspInit(std::vector<std::vector<int>> &adjacancyMatrix, std::vector<i
 		{
 			Stopwatch *timer = new Stopwatch();
 			timer->point1 = chrono::high_resolution_clock::now();
-			popInit(popMember, noOfCities, parentsPop, popSize);
+			popInit(popMember, noOfCities, parentsPop, popSize, adjacancyMatrix);
 			TSP(adjacancyMatrix, popMember, noOfCities, parentsPop, childrenPop, popSize, crossoverRatio, mutationRatio);
 			std::cout << endl << timer->countTimeDiff() << " nanosecs to complete this action\n";
 			popMember.clear();
@@ -478,7 +414,7 @@ int tspGA::tspInit(std::vector<std::vector<int>> &adjacancyMatrix, std::vector<i
 			for (int i = 0; i < 51; i++)
 			{
 				timer->point1 = chrono::high_resolution_clock::now();
-				popInit(popMember, noOfCities, parentsPop, popSize);
+				popInit(popMember, noOfCities, parentsPop, popSize, adjacancyMatrix);
 				result = TSP(adjacancyMatrix, popMember, noOfCities, parentsPop, childrenPop, popSize, crossoverRatio, mutationRatio);
 				myOutput << timer->countTimeDiff() << "\t" << result << endl;
 				popMember.clear();

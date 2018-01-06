@@ -25,19 +25,21 @@ private:
 public:
 	tspGA();
 	~tspGA();
-	int TSP(std::vector<std::vector<int>> &adjacancyMatrix, std::vector<int> &popMember, int noOfCities, std::vector<std::vector<int>> &parentsPop, std::vector<std::vector<int>> &childrenPop, int popSize, double crossoverRatio, double mutationRatio);
-	void popInit(std::vector<int> &popMember, int noOfCities, std::vector<std::vector<int>> &parentsPop, int popSize);
-	int calculateCost(std::vector<std::vector<int>> &adjacancyMatrix, int noOfCities, std::vector<std::vector<int>> &parentsPop, int memberPtr);
-	int randInt(int l, int r);
-	int tspInit(std::vector<std::vector<int>> &adjacancyMatrix, std::vector<int> &popMember, int noOfCities, std::vector<std::vector<int>> &parentsPop, std::vector<std::vector<int>> &childrenPop, int popSize);
+	int TSP(std::vector<std::vector<int>> &, std::vector<int> &, int, std::vector<std::vector<int>> &, std::vector<std::vector<int>> &, int, double, double);
+	int tspInit(std::vector<std::vector<int>> &, std::vector<int> &, int, std::vector<std::vector<int>> &, std::vector<std::vector<int>> &, int);
+	int calculateCost(std::vector<std::vector<int>> &, int , std::vector<std::vector<int>> &, int);
+	int randInt(int, int);
+	void popInit(std::vector<int> &, int, std::vector<std::vector<int>> &, int, std::vector<std::vector<int>> &);
+	void start(void);
+
 	std::vector<std::vector<int>> getAdjacancyMatrix(void);
 	std::vector<std::vector<int>> getParentsPop(void);
 	std::vector<std::vector<int>> getChildrenPop(void);
 	std::vector<int> getPopMember(void);
-	int setPopSize(int popSize);
-	double setMutationRatio(double mutationRatio);
-	double setCrossoverRatio(double crossoverRatio);
 	int getPopSize(void);
 	int getNoOfCities(void);
-	void start(void);
+
+	double setMutationRatio(double);
+	double setCrossoverRatio(double);
+	int setPopSize(int);
 };
