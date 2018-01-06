@@ -1,4 +1,4 @@
-NAME: fri26
+NAME: fri23
 TYPE: TSP
 COMMENT: 23 Staedte (Fricker)
 DIMENSION: 23

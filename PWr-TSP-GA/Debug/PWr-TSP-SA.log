@@ -1,10 +1,19 @@
-﻿C:\Program Files (x86)\MSBuild\Microsoft.Cpp\v4.0\V140\Microsoft.CppBuild.targets(392,5): warning MSB8028: The intermediate directory (Debug\) contains files shared from another project (PWr-TSP-SA.vcxproj).  This can lead to incorrect clean and rebuild behavior.
-  tspGA.cpp
-c:\users\filip\documents\workspace\vsprojects\pwr-tsp-ga\pwr-tsp-ga\tspga.cpp(100): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
-c:\users\filip\documents\workspace\vsprojects\pwr-tsp-ga\pwr-tsp-ga\tspga.cpp(138): warning C4101: 'currParent': unreferenced local variable
-c:\users\filip\documents\workspace\vsprojects\pwr-tsp-ga\pwr-tsp-ga\tspga.cpp(524): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
-  Generating Code...
-  Skipping... (no relevant changes detected)
-  main.cpp
-  PWr-TSP-SA.vcxproj -> C:\Users\Filip\Documents\workspace\VSProjects\PWr-TSP-GA\Debug\PWr-TSP-GA.exe
-  PWr-TSP-SA.vcxproj -> C:\Users\Filip\Documents\workspace\VSProjects\PWr-TSP-GA\Debug\PWr-TSP-GA.pdb (Partial PDB)
+﻿Build started 06.01.2018 21:51:35.
+     1>Project "C:\Users\Filicz\Documents\workspace\VSProjects\PWr-TSP-GA\PWr-TSP-GA\PWr-TSP-SA.vcxproj" on node 2 (Build target(s)).
+     1>C:\Program Files (x86)\MSBuild\Microsoft.Cpp\v4.0\V140\Microsoft.CppBuild.targets(392,5): warning MSB8028: The intermediate directory (Debug\) contains files shared from another project (PWr-TSP-SA.vcxproj).  This can lead to incorrect clean and rebuild behavior.
+     1>ClCompile:
+         C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /sdl /Od /Oy- /D _MBCS /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /Fo"Debug\\" /Fd"Debug\vc140.pdb" /Gd /TP /analyze- /errorReport:prompt tspGA.cpp
+         tspGA.cpp
+     1>c:\users\filicz\documents\workspace\vsprojects\pwr-tsp-ga\pwr-tsp-ga\tspga.cpp(57): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
+     1>c:\users\filicz\documents\workspace\vsprojects\pwr-tsp-ga\pwr-tsp-ga\tspga.cpp(95): warning C4101: 'currParent': unreferenced local variable
+     1>c:\users\filicz\documents\workspace\vsprojects\pwr-tsp-ga\pwr-tsp-ga\tspga.cpp(481): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
+       Link:
+         C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"C:\Users\Filicz\Documents\workspace\VSProjects\PWr-TSP-GA\Debug\PWr-TSP-GA.exe" /INCREMENTAL /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG:FASTLINK /PDB:"C:\Users\Filicz\Documents\workspace\VSProjects\PWr-TSP-GA\Debug\PWr-TSP-GA.pdb" /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:\Users\Filicz\Documents\workspace\VSProjects\PWr-TSP-GA\Debug\PWr-TSP-GA.lib" /MACHINE:X86 Debug\main.obj
+         Debug\Stopwatch.obj
+         Debug\tspGA.obj
+         PWr-TSP-SA.vcxproj -> C:\Users\Filicz\Documents\workspace\VSProjects\PWr-TSP-GA\Debug\PWr-TSP-GA.exe
+     1>Done Building Project "C:\Users\Filicz\Documents\workspace\VSProjects\PWr-TSP-GA\PWr-TSP-GA\PWr-TSP-SA.vcxproj" (Build target(s)).
+
+Build succeeded.
+
+Time Elapsed 00:00:01.54

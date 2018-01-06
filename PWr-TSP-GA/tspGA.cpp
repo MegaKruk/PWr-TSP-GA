@@ -20,49 +20,6 @@ void tspGA::popInit(std::vector<int> &popMember, int noOfCities, std::vector<std
 			popMember[i + 1] = popMember[0];
 	}
 
-	// choose first parent with greedy
-	/*int bestGreedy;
-	int currGreedy;
-	std::vector <int> visited;
-	bool isVisited;
-	visited.push_back(0);
-	popMember[0] = 0;
-	popMember[noOfCities] = 0;
-	for (int i = 1; i < noOfCities; i++)
-	{
-		bestGreedy = INT_MAX;
-		isVisited = false;
-		for (int j = 0; j < noOfCities; j++)
-		{
-			if (adjacancyMatrix[popMember[i - 1]][j] != 0)
-			{
-				for (int k = 0; k < visited.size(); k++)
-				{
-					if (j == visited[k])
-						isVisited = true;
-				}
-				if (isVisited == false) 
-				{
-					currGreedy = adjacancyMatrix[popMember[i - 1]][j];
-					if (currGreedy < bestGreedy)
-					{
-						popMember[i] = j;
-						visited.push_back(j);
-						bestGreedy = currGreedy;
-					}
-				}
-			}
-		}
-	}
-	visited.clear();
-	visited.resize(0);
-	cout << endl << "popM ";
-	for (int i = 0; i < noOfCities + 1; i++)
-	{
-		cout << popMember[i] << " ";
-	}
-	cout << endl;
-	*/
 	for (int j = 0; j < popSize; j++)
 	{
 		for (int h = 0; h < 1024 * noOfCities; h++)
@@ -360,7 +317,8 @@ int tspGA::TSP(std::vector<std::vector<int>> &adjacancyMatrix, std::vector<int> 
 			}
 		}
 		iterations++;
-	} while (iterations < sqrt(noOfCities) * 10000);
+		//sqrt(noOfCities) * 4000
+	} while (iterations < sqrt(noOfCities) * 5000);
 
 	std::cout << endl << endl << "Cost:\t" << bestCost << endl;
 	std::cout << "Path:\t";
@@ -380,9 +338,9 @@ int tspGA::TSP(std::vector<std::vector<int>> &adjacancyMatrix, std::vector<int> 
 // load data, prepare TSP function
 int tspGA::tspInit(std::vector<std::vector<int>> &adjacancyMatrix, std::vector<int> &popMember, int noOfCities, std::vector<std::vector<int>> &parentsPop, std::vector<std::vector<int>> &childrenPop, int popSize)
 {
-	mutationRatio = 10;			// w promilach (najlepsze 0.5-1.0%)
+	mutationRatio = 300;		// w promilach (najlepsze 0.5-1.0%)
 	crossoverRatio = 90;		// w procentach (najlepsze 60%, 80-95%)
-	popSize = 30;				// musi byæ parzysta (najlepsze 20-30, 50-100)
+	popSize = 50;				// musi byæ parzysta (najlepsze 20-30, 50-100)
 
 	// main menu
 	while (1)
@@ -411,16 +369,15 @@ int tspGA::tspInit(std::vector<std::vector<int>> &adjacancyMatrix, std::vector<i
 			int result = 0;
 			Stopwatch *timer = new Stopwatch();
 
-			for (int i = 0; i < 51; i++)
+			for (int i = 0; i < 21; i++)
 			{
 				timer->point1 = chrono::high_resolution_clock::now();
 				popInit(popMember, noOfCities, parentsPop, popSize, adjacancyMatrix);
 				result = TSP(adjacancyMatrix, popMember, noOfCities, parentsPop, childrenPop, popSize, crossoverRatio, mutationRatio);
 				myOutput << timer->countTimeDiff() << "\t" << result << endl;
 				popMember.clear();
-				std::cout << endl << (i + 1) * 100 / 51 << " % done";
+				std::cout << endl << (i + 1) * 100 / 21 << " % done";
 			}
-			adjacancyMatrix.clear();
 			break;
 		}
 		case 3:
