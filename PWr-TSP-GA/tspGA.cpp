@@ -369,14 +369,14 @@ int tspGA::tspInit(std::vector<std::vector<int>> &adjacancyMatrix, std::vector<i
 			int result = 0;
 			Stopwatch *timer = new Stopwatch();
 
-			for (int i = 0; i < 21; i++)
+			for (int i = 0; i < 51; i++)
 			{
 				timer->point1 = chrono::high_resolution_clock::now();
 				popInit(popMember, noOfCities, parentsPop, popSize, adjacancyMatrix);
 				result = TSP(adjacancyMatrix, popMember, noOfCities, parentsPop, childrenPop, popSize, crossoverRatio, mutationRatio);
 				myOutput << timer->countTimeDiff() << "\t" << result << endl;
 				popMember.clear();
-				std::cout << endl << (i + 1) * 100 / 21 << " % done";
+				std::cout << endl << (i + 1) * 100 / 51 << " % done";
 			}
 			break;
 		}
